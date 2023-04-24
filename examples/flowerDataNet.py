@@ -51,7 +51,7 @@ class NeuralNet(nn.Module):
 			nn.ReLU(),
 			nn.Linear(10000,10000),
 			nn.ReLU(),
-			nn.Linear(40000,102)
+			nn.Linear(10000,102)
 		)
 	def forward(self,x):
 		x = self.flatten(x)
