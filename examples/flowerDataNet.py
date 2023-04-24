@@ -47,9 +47,9 @@ class NeuralNet(nn.Module):
 		super().__init__()
 		self.flatten = nn.Flatten()
 		self.linear_relu_stack = nn.Sequential(
-			nn.Linear(40000,40000),
+			nn.Linear(40000,10000),
 			nn.ReLU(),
-			nn.Linear(40000,40000),
+			nn.Linear(10000,10000),
 			nn.ReLU(),
 			nn.Linear(40000,102)
 		)
@@ -67,7 +67,8 @@ def trainNet(dataLoader, model, lossFunc ,optimizer):
 		optimizer.zero_grad()
 		loss.backward()
 		optimizer.step()
-		print("my loss is:" + str( loss))
+		if batch % 50 == 0:
+			print("my loss is:" + str( loss))
 
 
 
