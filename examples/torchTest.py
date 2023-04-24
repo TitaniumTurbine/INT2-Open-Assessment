@@ -1,3 +1,7 @@
+# Example resources
+# https://pytorch.org/tutorials/beginner/basics/transforms_tutorial.html
+# https://pytorch.org/tutorials/beginner/basics/optimization_tutorial.html
+
 import torch
 from torch.utils.data import Dataset
 from torchvision import datasets
