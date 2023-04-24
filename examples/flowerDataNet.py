@@ -8,6 +8,15 @@ import torchvision.transforms as T
 from torch.utils.data import DataLoader
 from torch import nn
 
+device = (
+    "cuda"
+    if torch.cuda.is_available()
+    else "mps"
+    if torch.backends.mps.is_available()
+    else "cpu"
+)
+print(f"Using {device} device")
+
 # This transform takes all of the input images and resizes them all
 
 class reziseImages(object): 
@@ -36,7 +45,7 @@ flowersTestingData = datasets.Flowers102(
 	root="flowerData",
 	split = "test",
 	download= True,
-	transform=ToTensor(),
+	transform=myTrans,
 
 )
 
@@ -57,9 +66,9 @@ class NeuralNet(nn.Module):
 		x = self.flatten(x)
 		logits = self.linear_relu_stack(x)
 		return logits
-model = NeuralNet()
+model = NeuralNet().to(device)
 
-def trainNet(dataLoader, model, lossFunc ,optimizer):
+def trainNet(dataLoader, model, loss_fn ,optimizer):
 	for batch, (x,y) in enumerate(dataLoader):
 		print(x.shape)
 		pred = model(x)
@@ -67,11 +76,25 @@ def trainNet(dataLoader, model, lossFunc ,optimizer):
 		optimizer.zero_grad()
 		loss.backward()
 		optimizer.step()
-		if batch % 50 == 0:
-			print("my loss is:" + str( loss))
+		#if batch % 50 == 0:
+			#print("my loss is:" + str( loss))
 
 
-
+def testNet(dataloader, model, loss_fn):
+    size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    test_loss, correct = 0,0
+    with torch.no_grad():
+        for X, y in dataloader:
+            X = X.to(device)
+            y = y.to(device)
+            pred = model (X)
+            test_loss = loss_fn(pred, y).item()
+            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+    test_loss /= num_batches
+    correct /= size
+    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    
 
 
 
@@ -81,7 +104,9 @@ epochs = 2
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learningRate)
 train_dataloader = DataLoader(flowersTrainingData, batch_size=64, shuffle=True)
+test_dataloader = DataLoader(flowersTestingData, batch_size=64, shuffle=True)
 
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
     trainNet(train_dataloader, model, loss_fn, optimizer)
+    testNet(test_dataloader, model, loss_fn)
