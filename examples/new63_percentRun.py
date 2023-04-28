@@ -18,7 +18,7 @@ trainingSet2 = datasets.Flowers102(root="../flowerData", split="test", download=
 trainingSet3 = datasets.Flowers102(root="../flowerData", split="test", download=True, transform=transforms.Compose([transforms.Resize(img_size), ToTensor(), torchvision.transforms.ColorJitter(hue=.02, saturation=.02), torchvision.transforms.RandomHorizontalFlip(), torchvision.transforms.RandomRotation(20), torchvision.transforms.Grayscale(num_output_channels=3)]))
 
 print(training_data)
-print("shaope 1")
+print("shape 1")
 print(test_data)
 print("shape2")
 print(trainingSet2)
@@ -26,9 +26,11 @@ megaSet =  ConcatDataset([test_data, trainingSet2, trainingSet3])
 
 print("shape 3")
 print(megaSet)
+
 labels_map = {
     
 }
+
 figure = plt.figure(figsize=(8,8))
 cols, rows = 3, 3
 for i in range(1, cols * rows + 1):
@@ -39,6 +41,7 @@ for i in range(1, cols * rows + 1):
     plt.axis("off")
     plt.imshow(img.squeeze().permute(1,2,0))
 plt.show()
+
 device = (
     "cuda"
     if torch.cuda.is_available()
@@ -117,8 +120,9 @@ def test_loop(dataloader, model, loss_fn):
     test_loss /= num_batches
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    
 learning_rate = 2.2e-2
-batch_size = 65
+batch_size = 30
 epochs = 1000
 loss_fn = nn.CrossEntropyLoss()
 optimiser = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.1, weight_decay=0)
