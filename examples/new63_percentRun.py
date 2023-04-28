@@ -6,9 +6,8 @@ from torchvision import datasets, transforms
 from torchvision.transforms import ToTensor
 import matplotlib.pyplot as plt
 import torchvision
-import ssl
 from torch.utils.data import ConcatDataset
-ssl._create_default_https_context = ssl._create_unverified_context
+
 img_size = (325, 325)
 training_data = datasets.Flowers102(root="../flowerData", split="train", download=True, transform=transforms.Compose([transforms.Resize(img_size), ToTensor()]))
 test_data = datasets.Flowers102(root="../flowerData", split="test", download=True, transform=transforms.Compose([transforms.Resize(img_size), ToTensor()]))
